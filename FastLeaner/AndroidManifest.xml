@@ -28,7 +28,7 @@
         </activity>
 
         <provider
-            android:name=".contentprovider.MyFastLeanerContentProvider"
+            android:name="com.uyuni.fastlearner.contentprovider.MyFastLeanerContentProvider"
             android:authorities="com.uyuni.fastleaner.contentprovider" >
         </provider>
     </application>
