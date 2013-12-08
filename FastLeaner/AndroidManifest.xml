@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.uyuni.fastleaner"
+    package="com.uyuni.fastlearner"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -28,8 +28,8 @@
         </activity>
 
         <provider
-            android:name="com.uyuni.fastlearner.contentprovider.MyFastLeanerContentProvider"
-            android:authorities="com.uyuni.fastleaner.contentprovider" >
+            android:name="com.uyuni.fastlearner.contentprovider.MyFastLearnerContentProvider"
+            android:authorities="com.uyuni.fastlearner.contentprovider" >
         </provider>
     </application>
 

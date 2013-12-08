@@ -1,7 +1,7 @@
+
 package com.uyuni.fastlearner;
 
-import com.uyuni.fastleaner.R;
-import com.uyuni.fastlearner.contentprovider.MyFastLeanerContentProvider;
+import com.uyuni.fastlearner.contentprovider.MyFastLearnerContentProvider;
 import com.uyuni.fastlearner.db.BaseTable;
 
 import android.app.Activity;
@@ -18,120 +18,121 @@ import android.widget.Toast;
 
 public class BaseDetailActivity extends Activity {
 
-	private Spinner mCategory;
-	private EditText mTitleText;
-	private EditText mBodyText;
+    private Spinner mCategory;
 
-	private Uri baseUri;
+    private EditText mTitleText;
 
-	@Override
-	protected void onCreate(Bundle bundle) {
-		super.onCreate(bundle);
-		setContentView(R.layout.base_edit);
+    private EditText mBodyText;
 
-		mCategory = (Spinner) findViewById(R.id.category);
-		mTitleText = (EditText) findViewById(R.id.todo_edit_summary);
-		mBodyText = (EditText) findViewById(R.id.todo_edit_description);
-		Button confirmButton = (Button) findViewById(R.id.todo_edit_button);
+    private Uri baseUri;
 
-		Bundle extras = getIntent().getExtras();
+    @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setContentView(R.layout.base_edit);
 
-		// check from the saved Instance
-		baseUri = (bundle == null) ? null : (Uri) bundle
-				.getParcelable(MyFastLeanerContentProvider.CONTENT_ITEM_TYPE);
+        mCategory = (Spinner)findViewById(R.id.category);
+        mTitleText = (EditText)findViewById(R.id.todo_edit_summary);
+        mBodyText = (EditText)findViewById(R.id.todo_edit_description);
+        Button confirmButton = (Button)findViewById(R.id.todo_edit_button);
 
-		// Or passed from the other activity
-		if (extras != null) {
-			baseUri = extras
-					.getParcelable(MyFastLeanerContentProvider.CONTENT_ITEM_TYPE);
+        Bundle extras = getIntent().getExtras();
 
-			fillData(baseUri);
-		}
+        // check from the saved Instance
+        baseUri = (bundle == null) ? null : (Uri)bundle
+                .getParcelable(MyFastLearnerContentProvider.CONTENT_ITEM_TYPE);
 
-		confirmButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				if (TextUtils.isEmpty(mTitleText.getText().toString())) {
-					makeToast();
-				} else {
-					setResult(RESULT_OK);
-					finish();
-				}
-			}
+        // Or passed from the other activity
+        if (extras != null) {
+            baseUri = extras.getParcelable(MyFastLearnerContentProvider.CONTENT_ITEM_TYPE);
 
-		});
-	}
+            fillData(baseUri);
+        }
 
-	private void fillData(Uri uri) {
-		String[] projection = { BaseTable.COLUMN_WORD,
-				BaseTable.COLUMN_DEFINITION, BaseTable.COLUMN_CATEGORY };
-		Cursor cursor = getContentResolver().query(uri, projection, null, null,
-				null);
-		if (cursor != null) {
-			cursor.moveToFirst();
-			String category = cursor.getString(cursor
-					.getColumnIndexOrThrow(BaseTable.COLUMN_CATEGORY));
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(mTitleText.getText().toString())) {
+                    makeToast();
+                } else {
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            }
 
-			for (int i = 0; i < mCategory.getCount(); i++) {
+        });
+    }
 
-				String s = (String) mCategory.getItemAtPosition(i);
-				if (s.equalsIgnoreCase(category)) {
-					mCategory.setSelection(i);
-				}
-			}
+    private void fillData(Uri uri) {
+        String[] projection = {
+                BaseTable.COLUMN_WORD, BaseTable.COLUMN_DEFINITION, BaseTable.COLUMN_CATEGORY
+        };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            String category = cursor.getString(cursor
+                    .getColumnIndexOrThrow(BaseTable.COLUMN_CATEGORY));
 
-			mTitleText.setText(cursor.getString(cursor
-					.getColumnIndexOrThrow(BaseTable.COLUMN_WORD)));
-			mBodyText.setText(cursor.getString(cursor
-					.getColumnIndexOrThrow(BaseTable.COLUMN_DEFINITION)));
+            for (int i = 0; i < mCategory.getCount(); i++) {
 
-			// always close the cursor
-			cursor.close();
-		}
-	}
+                String s = (String)mCategory.getItemAtPosition(i);
+                if (s.equalsIgnoreCase(category)) {
+                    mCategory.setSelection(i);
+                }
+            }
 
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		saveState();
-		outState.putParcelable(MyFastLeanerContentProvider.CONTENT_ITEM_TYPE,
-				baseUri);
-	}
+            mTitleText
+                    .setText(cursor.getString(cursor.getColumnIndexOrThrow(BaseTable.COLUMN_WORD)));
+            mBodyText.setText(cursor.getString(cursor
+                    .getColumnIndexOrThrow(BaseTable.COLUMN_DEFINITION)));
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		saveState();
-	}
+            // always close the cursor
+            cursor.close();
+        }
+    }
 
-	private void saveState() {
-		String category = (String) mCategory.getSelectedItem();
-		String word = mTitleText.getText().toString();
-		String definition = mBodyText.getText().toString();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        saveState();
+        outState.putParcelable(MyFastLearnerContentProvider.CONTENT_ITEM_TYPE, baseUri);
+    }
 
-		// only save if either summary or description
-		// is available
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveState();
+    }
 
-		if (definition.length() == 0 && word.length() == 0) {
-			return;
-		}
+    private void saveState() {
+        String category = (String)mCategory.getSelectedItem();
+        String word = mTitleText.getText().toString();
+        String definition = mBodyText.getText().toString();
 
-		ContentValues values = new ContentValues();
-		values.put(BaseTable.COLUMN_CATEGORY, category);
-		values.put(BaseTable.COLUMN_WORD, word);
-		values.put(BaseTable.COLUMN_DEFINITION, definition);
+        // only save if either summary or description
+        // is available
 
-		if (baseUri == null) {
-			// New todo
-			baseUri = getContentResolver().insert(
-					MyFastLeanerContentProvider.CONTENT_URI, values);
-		} else {
-			// Update todo
-			getContentResolver().update(baseUri, values, null, null);
-		}
-	}
+        if (definition.length() == 0 && word.length() == 0) {
+            return;
+        }
 
-	private void makeToast() {
-		Toast.makeText(BaseDetailActivity.this, "Please maintain a summary",
-				Toast.LENGTH_LONG).show();
-	}
+        ContentValues values = new ContentValues();
+        values.put(BaseTable.COLUMN_CATEGORY, category);
+        values.put(BaseTable.COLUMN_WORD, word);
+        values.put(BaseTable.COLUMN_DEFINITION, definition);
+
+        if (baseUri == null) {
+            // New todo
+            baseUri = getContentResolver().insert(MyFastLearnerContentProvider.CONTENT_URI, values);
+        } else {
+            // Update todo
+            getContentResolver().update(baseUri, values, null, null);
+        }
+    }
+
+    private void makeToast() {
+        Toast.makeText(BaseDetailActivity.this, "Please maintain a summary", Toast.LENGTH_LONG)
+                .show();
+    }
 
 }

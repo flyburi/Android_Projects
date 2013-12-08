@@ -1,4 +1,9 @@
+
 package com.uyuni.fastlearner;
+
+import com.uyuni.fastlearner.R;
+import com.uyuni.fastlearner.contentprovider.MyFastLearnerContentProvider;
+import com.uyuni.fastlearner.db.BaseTable;
 
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
@@ -19,121 +24,120 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import com.uyuni.fastleaner.R;
-import com.uyuni.fastlearner.contentprovider.MyFastLeanerContentProvider;
-import com.uyuni.fastlearner.db.BaseTable;
-
 @SuppressLint("NewApi")
 public class BaseOverviewActivity extends ListActivity implements
-		LoaderManager.LoaderCallbacks<Cursor> {
-	private static final int ACTIVITY_CREATE = 0;
-	private static final int ACTIVITY_EDIT = 1;
-	private static final int DELETE_ID = Menu.FIRST + 1;
-	// private Cursor cursor;
-	private SimpleCursorAdapter adapter;
+        LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int ACTIVITY_CREATE = 0;
 
-	/** Called when the activity is first created. */
+    private static final int ACTIVITY_EDIT = 1;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base_list);
-		this.getListView().setDividerHeight(2);
-		fillData();
-		registerForContextMenu(getListView());
-	}
+    private static final int DELETE_ID = Menu.FIRST + 1;
 
-	// create the menu based on the XML defintion
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.listmenu, menu);
-		return true;
-	}
+    // private Cursor cursor;
+    private SimpleCursorAdapter adapter;
 
-	// Reaction to the menu selection
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.insert:
-			createTodo();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    /** Called when the activity is first created. */
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case DELETE_ID:
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-					.getMenuInfo();
-			Uri uri = Uri.parse(MyFastLeanerContentProvider.CONTENT_URI + "/"
-					+ info.id);
-			getContentResolver().delete(uri, null, null);
-			fillData();
-			return true;
-		}
-		return super.onContextItemSelected(item);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.base_list);
+        this.getListView().setDividerHeight(2);
+        fillData();
+        registerForContextMenu(getListView());
+    }
 
-	private void createTodo() {
-		Intent i = new Intent(this, BaseDetailActivity.class);
-		startActivity(i);
-	}
+    // create the menu based on the XML defintion
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.listmenu, menu);
+        return true;
+    }
 
-	// Opens the second activity if an entry is clicked
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		Intent i = new Intent(this, BaseDetailActivity.class);
-		Uri todoUri = Uri.parse(MyFastLeanerContentProvider.CONTENT_URI + "/"
-				+ id);
-		i.putExtra(MyFastLeanerContentProvider.CONTENT_ITEM_TYPE, todoUri);
+    // Reaction to the menu selection
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.insert:
+                createTodo();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-		startActivity(i);
-	}
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case DELETE_ID:
+                AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+                Uri uri = Uri.parse(MyFastLearnerContentProvider.CONTENT_URI + "/" + info.id);
+                getContentResolver().delete(uri, null, null);
+                fillData();
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
 
-	private void fillData() {
+    private void createTodo() {
+        Intent i = new Intent(this, BaseDetailActivity.class);
+        startActivity(i);
+    }
 
-		// Fields from the database (projection)
-		// Must include the _id column for the adapter to work
-		String[] from = new String[] { BaseTable.COLUMN_WORD };
-		// Fields on the UI to which we map
-		int[] to = new int[] { R.id.label };
+    // Opens the second activity if an entry is clicked
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent i = new Intent(this, BaseDetailActivity.class);
+        Uri todoUri = Uri.parse(MyFastLearnerContentProvider.CONTENT_URI + "/" + id);
+        i.putExtra(MyFastLearnerContentProvider.CONTENT_ITEM_TYPE, todoUri);
 
-		getLoaderManager().initLoader(0, null, this);
-		adapter = new SimpleCursorAdapter(this, R.layout.base_row, null, from,
-				to, 0);
+        startActivity(i);
+    }
 
-		setListAdapter(adapter);
-	}
+    private void fillData() {
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.add(0, DELETE_ID, 0, "Delete Word");
-	}
+        // Fields from the database (projection)
+        // Must include the _id column for the adapter to work
+        String[] from = new String[] {
+            BaseTable.COLUMN_WORD
+        };
+        // Fields on the UI to which we map
+        int[] to = new int[] {
+            R.id.label
+        };
 
-	// creates a new loader after the initLoader () call
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { BaseTable.COLUMN_ID, BaseTable.COLUMN_WORD };
-		CursorLoader cursorLoader = new CursorLoader(this,
-				MyFastLeanerContentProvider.CONTENT_URI, projection, null,
-				null, null);
-		return cursorLoader;
-	}
+        getLoaderManager().initLoader(0, null, this);
+        adapter = new SimpleCursorAdapter(this, R.layout.base_row, null, from, to, 0);
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapter.swapCursor(data);
-	}
+        setListAdapter(adapter);
+    }
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// data is not available anymore, delete reference
-		adapter.swapCursor(null);
-	}
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, DELETE_ID, 0, "Delete Word");
+    }
+
+    // creates a new loader after the initLoader () call
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                BaseTable.COLUMN_ID, BaseTable.COLUMN_WORD
+        };
+        CursorLoader cursorLoader = new CursorLoader(this, MyFastLearnerContentProvider.CONTENT_URI,
+                projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // data is not available anymore, delete reference
+        adapter.swapCursor(null);
+    }
 }
