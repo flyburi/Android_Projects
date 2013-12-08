@@ -1,4 +1,4 @@
-package com.uyuni.fastleaner.database;
+package com.uyuni.fastlearner.db;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;

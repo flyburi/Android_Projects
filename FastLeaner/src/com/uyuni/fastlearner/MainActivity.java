@@ -1,4 +1,6 @@
-package com.uyuni.fastleaner;
+package com.uyuni.fastlearner;
+
+import com.uyuni.fastleaner.R;
 
 import android.os.Bundle;
 import android.app.Activity;

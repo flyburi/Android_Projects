@@ -1,4 +1,4 @@
-package com.uyuni.fastleaner.contentprovider;
+package com.uyuni.fastlearner.contentprovider;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,8 +13,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.uyuni.fastleaner.database.BaseTable;
-import com.uyuni.fastleaner.database.BaseTableHelper;
+import com.uyuni.fastlearner.db.BaseTable;
+import com.uyuni.fastlearner.db.BaseTableHelper;
 
 public class MyFastLeanerContentProvider extends ContentProvider {
 

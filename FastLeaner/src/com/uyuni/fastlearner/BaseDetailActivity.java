@@ -1,7 +1,8 @@
-package com.uyuni.fastleaner;
+package com.uyuni.fastlearner;
 
-import com.uyuni.fastleaner.contentprovider.MyFastLeanerContentProvider;
-import com.uyuni.fastleaner.database.BaseTable;
+import com.uyuni.fastleaner.R;
+import com.uyuni.fastlearner.contentprovider.MyFastLeanerContentProvider;
+import com.uyuni.fastlearner.db.BaseTable;
 
 import android.app.Activity;
 import android.content.ContentValues;
